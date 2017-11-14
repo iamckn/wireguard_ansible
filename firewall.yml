@@ -1,0 +1,66 @@
+---
+ - name: Track input chain
+   iptables:
+     chain: INPUT
+     match: conntrack
+     ctstate: ESTABLISHED,RELATED
+     jump: ACCEPT
+
+ - name: Track forward chain  
+   iptables:
+     chain: FORWARD
+     match: conntrack
+     ctstate: ESTABLISHED,RELATED
+     jump: ACCEPT
+
+ - name: Allow incoming wireguard connections    
+   iptables:
+     chain: INPUT
+     protocol: udp
+     match: udp
+     destination_port: 51820
+     ctstate: NEW
+     jump: ACCEPT
+  
+ - name: Allow recursive DNS tcp    
+   iptables:
+     chain: INPUT
+     source: 10.200.200.0/24
+     protocol: tcp
+     match: tcp
+     destination_port: 53
+     ctstate: NEW
+     jump: ACCEPT
+ 
+ - name: Allow recursive DNS udp  
+   iptables:
+     chain: INPUT
+     source: 10.200.200.0/24
+     protocol: udp
+     match: udp
+     destination_port: 53
+     ctstate: NEW
+     jump: ACCEPT
+   
+ - name: Allow forwarding of packets that stay in the tunnel 
+   iptables:
+     chain: FORWARD
+     in_interface: wg0
+     match: conntrack
+     out_interface: wg0
+     ctstate: NEW
+     jump: ACCEPT
+
+ - name: Set up NAT
+   iptables:
+     table: nat
+     chain: POSTROUTING
+     source: 10.200.200.0/24
+     out_interface: eth0
+     jump: MASQUERADE  
+
+ - name: Install iptables-persistent
+   apt: pkg=iptables-persistent state=installed update_cache=true
+
+ - name: Set up iptables persistence
+   command: netfilter-persistent save

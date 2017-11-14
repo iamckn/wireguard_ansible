@@ -1,0 +1,92 @@
+---
+
+- hosts: all
+  #become: true
+  
+  vars:
+    testing123: testing
+
+  tasks:
+  - name: Determine the running kernel release
+    command: uname -r
+    register: kernel_release
+
+  - name: Add the WireGuard PPA
+    apt_repository:
+      repo: 'ppa:wireguard/wireguard'
+
+  - name: Install WireGuard and other requirements 
+    apt: name={{ item }} state=installed update_cache=true
+    with_items:
+      - linux-headers-{{ kernel_release.stdout }}
+      - linux-headers-generic
+      - wireguard-dkms
+      - wireguard-tools
+      - python2.7
+
+  - name: Generate private and public keys for the client and server
+    shell: umask 077; wg genkey | tee {{ item.private }} | wg pubkey > {{ item.public }}
+    with_items:
+      - { private: server_private_key, public: server_public_key }
+      - { private: client_private_key, public: client_public_key }
+
+  - name: Register the key file contents
+    command: cat {{ item }}
+    register: key_files
+    with_items:
+      - server_private_key
+      - server_public_key
+      - client_private_key
+      - client_public_key
+
+  - name: Assign the keys to their variables
+    set_fact:
+      server_private_key: "{{ key_files.results[0].stdout }}"
+      server_public_key: "{{ key_files.results[1].stdout }}"
+      client_private_key: "{{ key_files.results[2].stdout }}"
+      client_public_key: "{{ key_files.results[3].stdout }}"
+
+  - name: Generate server config
+    template:
+      src: "templates/wg0-server.conf"
+      dest: "/etc/wireguard/wg0.conf"
+      owner: root
+      group: root
+      mode: 0600
+
+  - name: Generate client config
+    template:
+      src: "templates/wg0-client.conf"
+      dest: "~/wg0.conf"
+      owner: root
+      group: root
+      mode: 0600
+  
+  - name: Enable and wireguard interface
+    systemd:
+      name: wg-quick@wg0
+      enabled: yes
+      state: started
+
+  - name: Enable IPv4 traffic forwarding
+    sysctl:
+      name: net.ipv4.ip_forward
+      value: 1
+      sysctl_set: yes
+      state: present
+      reload: yes
+
+  - name: Enable IPv4 forwarding continued
+    command: echo 1 > /proc/sys/net/ipv4/ip_forward 
+
+  - name: Set up firewall rules
+    include: firewall.yml
+
+  - name: Set up unbound for DNS
+    include: dns.yml
+
+  - name: Reboot the server
+    shell: sleep 2 && shutdown -r now
+    async: 1
+    poll: 0
+    ignore_errors: true
