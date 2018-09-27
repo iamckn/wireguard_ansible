@@ -55,7 +55,7 @@ Ten client configs labeled one.conf, two.conf... and so on will be created in th
 
 You can then move them to your clients using scp.
 
-Assuming you're using the first client config (one.conf), copy it to to **/etc/wireguard/** and you can start using the VPN tunnel on your client.
+Assuming you're using the first client config (one.conf), copy it to **/etc/wireguard/** and you can start using the VPN tunnel on your client.
 
 To bring up the VPN interface 
 ```bash
