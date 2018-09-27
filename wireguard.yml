@@ -28,7 +28,16 @@
     shell: umask 077; wg genkey | tee {{ item.private }} | wg pubkey > {{ item.public }}
     with_items:
       - { private: server_private_key, public: server_public_key }
-      - { private: client_private_key, public: client_public_key }
+      - { private: one_private_key, public: one_public_key }
+      - { private: two_private_key, public: two_public_key }
+      - { private: three_private_key, public: three_public_key }
+      - { private: four_private_key, public: four_public_key }
+      - { private: five_private_key, public: five_public_key }
+      - { private: six_private_key, public: six_public_key }
+      - { private: seven_private_key, public: seven_public_key }
+      - { private: eight_private_key, public: eight_public_key }
+      - { private: nine_private_key, public: nine_public_key }
+      - { private: ten_private_key, public: ten_public_key }
 
   - name: Register the key file contents
     command: cat {{ item }}
@@ -36,16 +45,52 @@
     with_items:
       - server_private_key
       - server_public_key
-      - client_private_key
-      - client_public_key
+      - one_private_key
+      - one_public_key
+      - two_private_key
+      - two_public_key
+      - three_private_key
+      - three_public_key
+      - four_private_key
+      - four_public_key
+      - five_private_key
+      - five_public_key
+      - six_private_key
+      - six_public_key
+      - seven_private_key
+      - seven_public_key
+      - eight_private_key
+      - eight_public_key
+      - nine_private_key
+      - nine_public_key
+      - ten_private_key
+      - ten_public_key
 
   - name: Assign the keys to their variables
     set_fact:
       server_private_key: "{{ key_files.results[0].stdout }}"
       server_public_key: "{{ key_files.results[1].stdout }}"
-      client_private_key: "{{ key_files.results[2].stdout }}"
-      client_public_key: "{{ key_files.results[3].stdout }}"
-
+      one_private_key: "{{ key_files.results[2].stdout }}"
+      one_public_key: "{{ key_files.results[3].stdout }}"
+      two_private_key: "{{ key_files.results[4].stdout }}"
+      two_public_key: "{{ key_files.results[5].stdout }}"
+      three_private_key: "{{ key_files.results[6].stdout }}"
+      three_public_key: "{{ key_files.results[7].stdout }}"
+      four_private_key: "{{ key_files.results[8].stdout }}"
+      four_public_key: "{{ key_files.results[9].stdout }}"
+      five_private_key: "{{ key_files.results[10].stdout }}"
+      five_public_key: "{{ key_files.results[11].stdout }}"
+      six_private_key: "{{ key_files.results[12].stdout }}"
+      six_public_key: "{{ key_files.results[13].stdout }}"
+      seven_private_key: "{{ key_files.results[14].stdout }}"
+      seven_public_key: "{{ key_files.results[15].stdout }}"
+      eight_private_key: "{{ key_files.results[16].stdout }}"
+      eight_public_key: "{{ key_files.results[17].stdout }}"
+      nine_private_key: "{{ key_files.results[18].stdout }}"
+      nine_public_key: "{{ key_files.results[19].stdout }}"
+      ten_private_key: "{{ key_files.results[20].stdout }}"
+      ten_public_key: "{{ key_files.results[21].stdout }}"
+      
   - name: Generate server config
     template:
       src: "templates/wg0-server.conf"
@@ -54,15 +99,89 @@
       group: root
       mode: 0600
 
-  - name: Generate client config
+  - name: Generate client one config
     template:
-      src: "templates/wg0-client.conf"
-      dest: "~/wg0.conf"
+      src: "templates/one.conf"
+      dest: "~/one.conf"
       owner: root
       group: root
       mode: 0600
+
+  - name: Generate client two config
+    template:
+      src: "templates/two.conf"
+      dest: "~/two.conf"
+      owner: root
+      group: root
+      mode: 0600
+
+  - name: Generate client three config
+    template:
+      src: "templates/three.conf"
+      dest: "~/three.conf"
+      owner: root
+      group: root
+      mode: 0600
+
+  - name: Generate client four config
+    template:
+      src: "templates/four.conf"
+      dest: "~/four.conf"
+      owner: root
+      group: root
+      mode: 0600
+
+  - name: Generate client five config
+    template:
+      src: "templates/five.conf"
+      dest: "~/five.conf"
+      owner: root
+      group: root
+      mode: 0600
+
+  - name: Generate client six config
+    template:
+      src: "templates/six.conf"
+      dest: "~/six.conf"
+      owner: root
+      group: root
+      mode: 0600
+
+  - name: Generate client seven config
+    template:
+      src: "templates/seven.conf"
+      dest: "~/seven.conf"
+      owner: root
+      group: root
+      mode: 0600
+
+  - name: Generate client eight config
+    template:
+      src: "templates/eight.conf"
+      dest: "~/eight.conf"
+      owner: root
+      group: root
+      mode: 0600
+
+  - name: Generate client nine config
+    template:
+      src: "templates/nine.conf"
+      dest: "~/nine.conf"
+      owner: root
+      group: root
+      mode: 0600
+
+  - name: Generate client ten config
+    template:
+      src: "templates/ten.conf"
+      dest: "~/ten.conf"
+      owner: root
+      group: root
+      mode: 0600
+
+
   
-  - name: Enable and wireguard interface
+  - name: Enable wireguard interface
     systemd:
       name: wg-quick@wg0
       enabled: yes
