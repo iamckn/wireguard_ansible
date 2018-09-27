@@ -1,6 +1,7 @@
 # wireguard_ansible
 
 This is the ansible automation of the Wireguard VPN set up described here https://www.ckn.io/blog/2017/11/14/wireguard-vpn-typical-setup/
+This will create ten VPN client profiles when done.
 
 # Requirements
 
@@ -50,21 +51,21 @@ ansible-playbook wireguard.yml -u root -i hosts
 
 Give it a few minutes and the server set up will be complete.
 
-A client config labeled wg0.conf will be created in the VPN server's home folder.
+Ten client configs labeled one.conf, two.conf... and so on will be created in the VPN server's home folder.
 
-You can then move it to your client using scp.
+You can then move them to your clients using scp.
 
-Copy the file to **/etc/wireguard/** and you can start using the VPN tunnel
+Assuming you're using the first client config (one.conf), copy it to to **/etc/wireguard/** and you can start using the VPN tunnel on your client.
 
-To bring up the VPN interface
+To bring up the VPN interface 
 ```bash
-sudo wg-quick up wg0
+sudo wg-quick up one
 ```
 
 
 To bring down the VPN interface
 ```bash
-sudo wg-quick down wg0
+sudo wg-quick down one
 ```
 
 To view connection details
