@@ -51,7 +51,7 @@ ansible-playbook wireguard.yml -u root -i hosts
 
 Give it a few minutes and the server set up will be complete.
 
-Ten client configs labeled one.conf, two.conf... and so on will be created in the VPN server's home folder.
+Ten client configs labeled one.conf, two.conf... and so on will be created in the home folder of the root user on the VPN server (/root).
 
 You can then move them to your clients using scp.
 
