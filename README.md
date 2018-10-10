@@ -24,7 +24,7 @@ This assumes you have an Ubuntu 16.04 server with ssh access on port 22.
 Ensure that you've already added the server key to your known hosts file by sshing into it at least once.
 If you are using an SSH key, then you can forgo that.
 
-This guide assumes assumes your VPN server's internet facing interface is **eth0**. If otherwise change the interface name in line **59** of the **firewall.yml** file to what you have.
+This guide assumes your VPN server's internet facing interface is **eth0**. If otherwise change the interface name in line **59** of the **firewall.yml** file to what you have.
 
 # Usage
 
@@ -72,5 +72,17 @@ To view connection details
 ```bash
 sudo wg show
 ```
+# DNS issues
+
+If there is another service listening on port 53, you will have issues with getting DNS resolution working.
+It is therefore advisable to either disable or change the port of any service already using port 53.
+An example of this is the **systemd-resolved** service on Ubuntu 18.04. You should switch off binding to port 53 by editing the file **/etc/systemd/resolved.conf** as follows:
+
+```bash
+DNSStubListener=no
+```
+
+Reboot the VPN server and DNS resolution will work as expected.
+
 
 More details on the setup can be found in the post referenced above.
