@@ -1,0 +1,27 @@
+- name: Generate an additional client config
+  shell: umask 077; wg genkey | tee "{{ new_client }}.private" | wg pubkey > "{{ new_client }}.public"
+
+- name: Register private key file contents
+  shell: cat "{{ new_client }}.private"
+  register: new_private_key_file
+
+- name: Register public key file contents
+  shell: cat "{{ new_client }}.public"
+  register: new_public_key_file
+
+- name: Generate the new client config
+  template:
+    src: "templates/new_client.conf"
+    dest: "~/{{ new_client }}.conf"
+    owner: root
+    group: root
+    mode: 0600
+
+- name: Register the new client on the vpn server
+  shell: wg set wg0 peer "{{ new_public_key_file.stdout }}" allowed-ips "{{ new_client_ip }}/32"
+
+- name:  Download the new client config
+  fetch: 
+    src: "~/{{ new_client }}.conf"
+    dest: "wireguard_role/profiles/"
+    flat: yes

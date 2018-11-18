@@ -1,0 +1,44 @@
+---
+# tasks file for wireguard_role
+
+- name: Install wireguard and other prequisites on the server
+  include: 'install_wireguard.yml'
+  tags: install_wireguard
+
+- name: Generate client keys and enable wireguard interface
+  include: 'generate_keys.yml'
+  tags: generate_keys
+
+- name: Set up nat and firewall rules
+  include: 'nat_and_firewall.yml'
+  tags: nat_and_firewall
+
+- name: Set up unbound for DNS operations
+  include: 'dns.yml'
+  tags: dns
+
+- name: Download client configs
+  include: 'download_configs.yml'
+  tags: download_configs
+
+- shell: /bin/true
+  register: normal_task_list
+
+- name: restart the server - will only run if the "reboot" tag is specified
+  command: echo "This will reboot the vpn server"
+  notify: "reboot the server"
+  when: normal_task_list is not defined
+  tags: reboot
+
+#When you need to add new clients in future specify the tag "add_client"
+#Set the "new_client" variable to the name of your new client config file
+#Set the "new_client_ip" variable to the IP of the new client
+#The new client config will be downloaded to the "wireguard_role/profiles/" folder on your local host
+
+- name: Add another client - will only run if the add_client tag is specified
+  include: 'additional_client.yml'
+  vars:
+    new_client: newclient
+    new_client_ip: 10.200.200.11
+  when: normal_task_list is not defined 
+  tags: add_client

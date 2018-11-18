@@ -1,0 +1,9 @@
+---
+# handlers file for wireguard_role
+
+- name: Reboot the server
+  shell: sleep 2 && shutdown -r now
+  async: 1
+  poll: 0
+  ignore_errors: true
+  listen: "reboot the server"

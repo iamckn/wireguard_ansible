@@ -1,0 +1,13 @@
+- name: Register client configs for download
+  find: 
+    paths: "~/" 
+    recurse: no 
+    patterns: "client_*"
+  register: client_configs
+
+- name:  Download client configs to the "wireguard_role/profiles/" folder on your local host
+  fetch: 
+    src: "{{ item.path }}"
+    dest: "wireguard_role/profiles/"
+    flat: yes
+  with_items: "{{ client_configs.files }}"
