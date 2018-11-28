@@ -6,11 +6,14 @@
   apt_repository:
     repo: 'ppa:wireguard/wireguard'
 
+# Using with_items loop for apt module is deprecated
 - name: Install WireGuard and other requirements 
-  apt: name={{ item }} state=installed update_cache=true
-  with_items:
-    - linux-headers-{{ kernel_release.stdout }}
-    - linux-headers-generic
-    - wireguard-dkms
-    - wireguard-tools
-    - python2.7
+  apt:
+    name:
+      - linux-headers-{{ kernel_release.stdout }}
+      - linux-headers-generic
+      - wireguard-dkms
+      - wireguard-tools
+      - python2.7        
+    state: present
+    update_cache: true

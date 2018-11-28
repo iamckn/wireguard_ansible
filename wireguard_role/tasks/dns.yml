@@ -1,8 +1,10 @@
 - name: Install unbound
-  apt: name={{ item }} state=installed update_cache=true
-  with_items:
-    - unbound
-    - unbound-host
+  apt: 
+    name:
+      - unbound
+      - unbound-host
+    state: present
+    update_cache: true
 
 - name: Download the list of Root DNS Server
   get_url:
