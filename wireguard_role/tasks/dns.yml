@@ -30,4 +30,11 @@
     path: /var/lib/unbound
     owner: unbound
     group: unbound
-    recurse: yes
+    recurse: yes 
+
+- name: Turn off resolved (in Ubuntu 18.04)
+  lineinfile:
+    path: /etc/systemd/resolved.conf
+    regexp: '^DNSStubListener='
+    line: 'DNSStubListener=no'
+    create: no
