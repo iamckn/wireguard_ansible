@@ -37,7 +37,8 @@
     owner: root
     group: root
     mode: 0600
-
+  when: wg0_conf is not defined or wg0_conf.stat.exists == false
+      
 - name: Generate client configs
   template:
     src: "templates/client.conf"
