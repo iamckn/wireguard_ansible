@@ -64,6 +64,23 @@
     dest: "wireguard_role/templates/new_client.conf"
     flat: yes
   when: wg0_conf is not defined or wg0_conf.stat.exists == false
+# Should happen last among the config file creations, so if the process 
+# is interrupted we will re-generate everything (the existence of the 
+# server config is used to determine whether to generate the server and 
+# client config files)
+- name: Generate server config
+  template:
+    src: "templates/server.conf"
+    dest: "/etc/wireguard/wg0.conf"
+    owner: root
+    group: root
+    mode: 0600
+  when: wg0_conf.stat is not defined or wg0_conf.stat.exists == false
+
+- name: Print server public key
+  debug:
+    var: public_key_files.results[0].stdout
+  when: wg0_conf.stat is not defined or wg0_conf.stat.exists == false
 
 - name: Enable wireguard interface
   systemd:
