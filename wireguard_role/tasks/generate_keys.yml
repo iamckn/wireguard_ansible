@@ -92,3 +92,4 @@
 - name: Register the clients on the vpn server
   shell: wg set wg0 peer {{ public_key_files.results[item|int].stdout }} allowed-ips {{ vpn_network }}.{{item|int + 1}}/32
   with_sequence: start=1 end={{ clients }}
+  when: wg0_conf is not defined or wg0_conf.stat.exists == false
