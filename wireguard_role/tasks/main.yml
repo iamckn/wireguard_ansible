@@ -21,14 +21,13 @@
   include: 'download_configs.yml'
   tags: download_configs
 
-- shell: /bin/true
-  register: normal_task_list
-
-- name: restart the server - will only run if the "reboot" tag is specified
-  command: echo "This will reboot the vpn server"
-  notify: "reboot the server"
-  when: normal_task_list is not defined
-  tags: reboot
+# Disabled: currently tasks notify "reboot the server" directly so reboots only
+# happen when those tasks result in changes that require a reboot.
+# Currently this is only `Enable and start unbound service` in `dns.yml`
+#- name: restart the server - will only run if the "reboot" tag is specified
+#  command: echo "This will reboot the vpn server"
+#  notify: "reboot the server"
+#  tags: ['never', 'reboot']  # https://serverfault.com/a/907329
 
 #When you need to add new clients in future specify the tag "add_client"
 #Set the "new_client" variable to the name of your new client config file
