@@ -17,8 +17,10 @@
     group: root
     mode: 0600
 
-- name: Register the new client on the vpn server
-  shell: wg set wg0 peer "{{ new_public_key_file.stdout }}" allowed-ips "{{ new_client_ip }}/32"
+# **THIS IS BROKEN**
+# FAILED! => {"changed": false, "msg": "AnsibleUndefinedVariable: 'dict object' has no attribute 'stdout'"}
+#- name: Register the new client on the vpn server
+#  shell: wg set wg0 peer "{{ new_public_key_file.stdout }}" allowed-ips "{{ new_client_ip }}/32"
 
 - name:  Download the new client config
   fetch: 

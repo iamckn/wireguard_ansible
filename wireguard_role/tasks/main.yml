@@ -35,10 +35,13 @@
 #Set the "new_client_ip" variable to the IP of the new client
 #The new client config will be downloaded to the "wireguard_role/profiles/" folder on your local host
 
-- name: Add another client - will only run if the add_client tag is specified
-  include: 'additional_client.yml'
-  vars:
-    new_client: newclient
-    new_client_ip: 10.200.200.11
-  when: normal_task_list is not defined 
-  tags: add_client
+
+
+# **THIS IS BROKEN**
+# FAILED! => {"changed": false, "msg": "AnsibleUndefinedVariable: 'dict object' has no attribute 'stdout'"}
+#- name: Add another client - will only run if the add_client tag is specified
+#  include: 'additional_client.yml'
+#  vars:
+#    new_client: newclient
+#    new_client_ip: 10.200.200.11
+#  tags: ['never', 'add_client']  # https://serverfault.com/a/907329
