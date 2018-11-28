@@ -6,7 +6,7 @@
     state: present
     update_cache: true
 
-- name: Download the list of Root DNS Server
+- name: Download the list of root DNS servers
   get_url:
     url: https://www.internic.net/domain/named.cache
     dest: /var/lib/unbound/root.hints
