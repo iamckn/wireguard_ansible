@@ -64,6 +64,22 @@
     dest: "wireguard_role/templates/new_client.conf"
     flat: yes
   when: wg0_conf is not defined or wg0_conf.stat.exists == false
+  
+# Else an already-running service will overwrite the local
+# config we are about to create when it quits
+- name: Stop any running Wireguard service
+  systemd:
+    name: wg-quick@wg0.service
+    state: stopped
+  when: wg0_conf is not defined or wg0_conf.stat.exists == false
+
+
+# Sometimes systemd doesn't do the job
+- name: Stop any running Wireguard service directly
+  shell: "wg-quick down wg0 || true"  # ignore failures
+  register: wg_quick_down_out  # For debugging
+  when: wg0_conf is not defined or wg0_conf.stat.exists == false
+
 # Should happen last among the config file creations, so if the process 
 # is interrupted we will re-generate everything (the existence of the 
 # server config is used to determine whether to generate the server and 
