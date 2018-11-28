@@ -11,7 +11,7 @@
 
 - name: Generate the new client config
   template:
-    src: "templates/new_client.conf"
+    src: "templates/add_client.conf"
     dest: "~/{{ new_client }}.conf"
     owner: root
     group: root
