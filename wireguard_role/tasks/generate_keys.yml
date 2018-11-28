@@ -1,20 +1,34 @@
 #The server keys will be 0.private and 0.public. The client keys will start from 1 onwards.
 #Note the number of clients is declared in "defaults/main.yml".
 
+# This is how we avoid generating new keys every time this is run.
+# To force re-generating everything, before running the
+# playbook go on the server and do
+#     wg-quick down wg0 && rm /etc/wireguard/wg0.conf 
+# (simply removing wg0.conf without previously shutting down the service
+# will make it impossible to shut down the service in an orderly fashion!)
+- name: Check if wg0-server.conf already exists
+  stat:
+    path: /etc/wireguard/wg0.conf
+  register: wg0_conf
+
 - name: Generate private and public keys for the client and server
   shell: umask 077; wg genkey | tee {{ item }}.private | wg pubkey > {{ item }}.public
   register: key_files
   with_sequence: start=0 end={{ clients }}
+  when: wg0_conf is not defined or wg0_conf.stat.exists == false
 
 - name: Register private key file contents
   shell: cat {{ item }}.private
   register: private_key_files
   with_sequence: start=0 end={{ clients }}
+  when: wg0_conf is not defined or wg0_conf.stat.exists == false
 
 - name: Register public key file contents
   shell: cat {{ item }}.public
   register: public_key_files
   with_sequence: start=0 end={{ clients }}
+  when: wg0_conf is not defined or wg0_conf.stat.exists == false
 
 - name: Generate server config
   template:
@@ -32,6 +46,7 @@
     group: root
     mode: 0600
   with_sequence: start=1 end={{ clients }}
+  when: wg0_conf is not defined or wg0_conf.stat.exists == false
 
 - name: Generate template for additional clients in future
   template:
@@ -40,18 +55,21 @@
     owner: root
     group: root
     mode: 0600
+  when: wg0_conf is not defined or wg0_conf.stat.exists == false
 
 - name:  Download the template for additional clients in future
   fetch: 
     src: "~/new_client.conf"
     dest: "wireguard_role/templates/new_client.conf"
     flat: yes
+  when: wg0_conf is not defined or wg0_conf.stat.exists == false
 
 - name: Enable wireguard interface
   systemd:
     name: wg-quick@wg0
     enabled: yes
     state: started
+  # when is omitted since state should be `started` regardless
 
 - name: Register the clients on the vpn server
   shell: wg set wg0 peer {{ public_key_files.results[item|int].stdout }} allowed-ips {{ vpn_network }}.{{item|int + 1}}/32
