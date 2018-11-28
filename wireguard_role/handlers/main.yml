@@ -7,3 +7,11 @@
   poll: 0
   ignore_errors: true
   listen: "reboot the server"
+  
+- name: Wait for the reboot to complete if there was a change.
+  wait_for_connection:
+    connect_timeout: 20
+    sleep: 5
+    delay: 5
+    timeout: 300
+  listen: "reboot the server"

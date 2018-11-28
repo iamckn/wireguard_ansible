@@ -21,6 +21,7 @@
     name: unbound
     enabled: yes
     state: started
+  notify: "reboot the server"
 
 - name: Set var/lib/unbound ownership
   file:
