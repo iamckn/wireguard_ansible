@@ -17,6 +17,7 @@
   template:
     src: "templates/unbound.conf"
     dest: "/etc/unbound/unbound.conf"
+  notify: "reboot the server"
 
 - name: Enable and start unbound service
   systemd:
@@ -38,3 +39,4 @@
     regexp: '^DNSStubListener='
     line: 'DNSStubListener=no'
     create: no
+  notify: "reboot the server"
