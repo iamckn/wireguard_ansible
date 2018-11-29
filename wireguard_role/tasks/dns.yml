@@ -40,3 +40,31 @@
     line: 'DNSStubListener=no'
     create: no
   notify: "reboot the server"
+  register: remove_resolved
+
+- name: Disable the resolved service (in Ubuntu 18.04)  # https://askubuntu.com/a/907249
+  systemd:
+    name: systemd-resolved.service
+    enabled: no
+    state: stopped
+  notify: "reboot the server"
+  when: remove_resolved.changed  # Lest we make errors for those without resolved
+  
+- name: Delete the resolved-symlinked resolv.conf (in Ubuntu 18.04)  # https://askubuntu.com/a/907249
+  file:
+    path: "/etc/resolv.conf"
+    state: absent
+  notify: "reboot the server"
+  when: remove_resolved.changed
+
+# TODO: This needs further testing (run the whole playbook against a freshly
+# re-imaged server)
+#
+# https://www.pcextreme.nl/community/d/94-unbound-local-dns-cache-on-ubuntu-and-centos
+- name: Configure the system to use the local unbound DNS (in Ubuntu 18.04)
+  lineinfile:
+    path: /etc/resolv.conf
+    regexp: '^nameserver'
+    line: 'nameserver 127.0.0.1'
+    create: yes
+  when: remove_resolved.changed
