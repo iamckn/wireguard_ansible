@@ -6,7 +6,8 @@
 # playbook go on the server and do
 #     wg-quick down wg0 && rm /etc/wireguard/wg0.conf 
 # (simply removing wg0.conf without previously shutting down the service
-# will make it impossible to shut down the service in an orderly fashion!)
+# will make it impossible to shut down the service in an orderly fashion!
+# You will have to manually re-create a wg0.conf file before it will exit.)
 - name: Check if wg0-server.conf already exists
   stat:
     path: /etc/wireguard/wg0.conf
