@@ -31,19 +31,22 @@
   with_sequence: start=0 end={{ clients }}
   when: wg0_conf is not defined or wg0_conf.stat.exists == false
 
-- name: Generate server config
-  template:
-    src: "templates/server.conf"
-    dest: "/etc/wireguard/wg0.conf"
+# Client configs are traditionally named wg0-client.conf, this lets
+# us keep that scheme.
+- name: Generate directories for client configs
+  file:
+    path: "~/wg_clients/client_{{ item }}"
+    state: directory
     owner: root
     group: root
     mode: 0600
+  with_sequence: start=1 end={{ clients }}
   when: wg0_conf is not defined or wg0_conf.stat.exists == false
       
 - name: Generate client configs
   template:
     src: "templates/client.conf"
-    dest: "~/client_{{ item }}.conf"
+    dest: "~/wg_clients/client_{{ item }}/wg0-client.conf"
     owner: root
     group: root
     mode: 0600
