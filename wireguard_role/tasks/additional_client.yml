@@ -11,16 +11,14 @@
 
 - name: Generate the new client config
   template:
-    src: "templates/add_client.conf"
+    src: "templates/new_client.conf"
     dest: "~/{{ new_client }}.conf"
     owner: root
     group: root
     mode: 0600
 
-# **THIS IS BROKEN**
-# FAILED! => {"changed": false, "msg": "AnsibleUndefinedVariable: 'dict object' has no attribute 'stdout'"}
-#- name: Register the new client on the vpn server
-#  shell: wg set wg0 peer "{{ new_public_key_file.stdout }}" allowed-ips "{{ new_client_ip }}/32"
+- name: Register the new client on the vpn server
+  shell: wg set wg0 peer "{{ new_public_key_file.stdout }}" allowed-ips "{{ new_client_ip }}/32"
 
 - name:  Download the new client config
   fetch: 
