@@ -9,9 +9,13 @@
   shell: cat "{{ new_client }}.public"
   register: new_public_key_file
 
+- name: Register server public key file contents
+  shell: cat "0.public"
+  register: server_public_key_file
+
 - name: Generate the new client config
   template:
-    src: "templates/new_client.conf"
+    src: "templates/add_client.conf"
     dest: "~/{{ new_client }}.conf"
     owner: root
     group: root

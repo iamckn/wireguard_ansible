@@ -52,22 +52,7 @@
     mode: 0600
   with_sequence: start=1 end={{ clients }}
   when: wg0_conf is not defined or wg0_conf.stat.exists == false
-
-- name: Generate template for additional clients in future
-  template:
-    src: "templates/add_client.conf"
-    dest: "~/new_client.conf"
-    owner: root
-    group: root
-    mode: 0600
-  when: wg0_conf is not defined or wg0_conf.stat.exists == false
-
-- name:  Download the template for additional clients in future
-  fetch: 
-    src: "~/new_client.conf"
-    dest: "wireguard_role/templates/new_client.conf"
-    flat: yes
-  when: wg0_conf is not defined or wg0_conf.stat.exists == false
+  
   
 # Else an already-running service will overwrite the local
 # config we are about to create when it quits
