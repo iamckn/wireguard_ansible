@@ -49,7 +49,7 @@ ansible-playbook wireguard.yml -u root -k -i hosts
 If you're using an SSH key for authentication run this instead
 
 ```bash
-ansible-playbook wireguard.yml -u root -i hosts
+ansible-playbook wireguard.yml -u root -i hosts --key-file /path/to/keyfile
 ```
 
 Give it a few minutes and the server set up will be complete.
