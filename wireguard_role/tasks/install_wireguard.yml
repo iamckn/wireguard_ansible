@@ -2,18 +2,15 @@
   command: uname -r
   register: kernel_release
 
-- name: Add the WireGuard PPA
-  apt_repository:
-    repo: 'ppa:wireguard/wireguard'
-
 # Using with_items loop for apt module is deprecated
 - name: Install WireGuard and other requirements 
   apt:
     name:
       - linux-headers-{{ kernel_release.stdout }}
       - linux-headers-generic
+      - wireguard
       - wireguard-dkms
       - wireguard-tools
-      - python2.7        
+      - python2.7
     state: present
     update_cache: true
